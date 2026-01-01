@@ -1,0 +1,192 @@
+<%- include('../partials/header', { title: 'Add Plant Measurement' }) %>
+<%- include('../partials/navigation', { user: user }) %>
+
+<main class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-ruler-combined me-2"></i>
+                        Add Plant Measurement
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form action="/caretaker/growth-tracker/save" method="POST">
+                        <!-- Plant Selection -->
+                        <div class="mb-3">
+                            <label for="plant_name" class="form-label">Plant Name *</label>
+                            <input type="text" class="form-control" id="plant_name" name="plant_name" required 
+                                   placeholder="Enter plant name (e.g., Mogra Plant, Rose Bush)">
+                            <div class="form-text">Enter the name of the plant you're measuring</div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Height -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="height_cm" class="form-label">Height (cm)</label>
+                                    <input type="number" class="form-control" id="height_cm" name="height_cm" 
+                                           step="0.1" min="0" placeholder="e.g., 45.5">
+                                </div>
+                            </div>
+                            
+                            <!-- Width -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="width_cm" class="form-label">Width (cm)</label>
+                                    <input type="number" class="form-control" id="width_cm" name="width_cm" 
+                                           step="0.1" min="0" placeholder="e.g., 30.2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Leaf Count -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="leaf_count" class="form-label">Leaf Count</label>
+                                    <input type="number" class="form-control" id="leaf_count" name="leaf_count" 
+                                           min="0" placeholder="e.g., 24">
+                                </div>
+                            </div>
+                            
+                            <!-- Stem Diameter -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="stem_diameter_mm" class="form-label">Stem Diameter (mm)</label>
+                                    <input type="number" class="form-control" id="stem_diameter_mm" name="stem_diameter_mm" 
+                                           step="0.1" min="0" placeholder="e.g., 8.5">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Health Indicators -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="leaf_color" class="form-label">Leaf Color</label>
+                                    <select class="form-select" id="leaf_color" name="leaf_color">
+                                        <option value="">Select Color</option>
+                                        <option value="vibrant_green">Vibrant Green</option>
+                                        <option value="light_green">Light Green</option>
+                                        <option value="yellowing">Yellowing</option>
+                                        <option value="browning">Browning</option>
+                                        <option value="spotted">Spotted</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="leaf_condition" class="form-label">Leaf Condition</label>
+                                    <select class="form-select" id="leaf_condition" name="leaf_condition">
+                                        <option value="">Select Condition</option>
+                                        <option value="excellent">Excellent</option>
+                                        <option value="good">Good</option>
+                                        <option value="wilting">Wilting</option>
+                                        <option value="curling">Curling</option>
+                                        <option value="dropping">Dropping</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Environmental Conditions -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="sunlight_hours" class="form-label">Sunlight (hours/day)</label>
+                                    <input type="number" class="form-control" id="sunlight_hours" name="sunlight_hours" 
+                                           step="0.1" min="0" max="24" placeholder="e.g., 6.5">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="temperature_celsius" class="form-label">Temperature (°C)</label>
+                                    <input type="number" class="form-control" id="temperature_celsius" name="temperature_celsius" 
+                                           step="0.1" min="-10" max="50" placeholder="e.g., 25.5">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="humidity_percent" class="form-label">Humidity (%)</label>
+                                    <input type="number" class="form-control" id="humidity_percent" name="humidity_percent" 
+                                           min="0" max="100" placeholder="e.g., 65">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Observations & Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                      placeholder="Any additional observations about the plant's condition..."></textarea>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between">
+                            <a href="/caretaker/growth-tracker" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Tracker
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Save Measurement
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Form Validation Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const sunlightInput = document.getElementById('sunlight_hours');
+    const temperatureInput = document.getElementById('temperature_celsius');
+    
+    // Validate sunlight hours (0-24)
+    sunlightInput.addEventListener('change', function() {
+        const value = parseFloat(this.value);
+        if (value > 24) {
+            alert('Sunlight hours cannot exceed 24 hours per day');
+            this.value = 24;
+        }
+    });
+    
+    // Validate temperature (reasonable range)
+    temperatureInput.addEventListener('change', function() {
+        const value = parseFloat(this.value);
+        if (value < -10 || value > 50) {
+            alert('Temperature should be between -10°C and 50°C');
+            this.focus();
+        }
+    });
+    
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        const plantName = document.getElementById('plant_name').value.trim();
+        if (!plantName) {
+            e.preventDefault();
+            alert('Please enter a plant name');
+            return false;
+        }
+        
+        // Check if at least one measurement is provided
+        const height = document.getElementById('height_cm').value;
+        const width = document.getElementById('width_cm').value;
+        const leaves = document.getElementById('leaf_count').value;
+        
+        if (!height && !width && !leaves) {
+            e.preventDefault();
+            alert('Please provide at least one measurement (height, width, or leaf count)');
+            return false;
+        }
+    });
+});
+</script>
+</main>
+
+<%- include('../partials/footer') %>

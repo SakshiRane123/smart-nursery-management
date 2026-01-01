@@ -1,0 +1,159 @@
+<%- include('../partials/header', { title: 'Browse Plants' }) %>
+<%- include('../partials/navigation', { user: user }) %>
+
+<main class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-leaf me-2"></i>Browse Plants</h2>
+                <a href="/customer/wishlist" class="btn btn-outline-danger">
+                    <i class="fas fa-heart me-2"></i>My Wishlist
+                </a>
+            </div>
+
+            <% if (plants && plants.length > 0) { %>
+                <div class="row">
+                    <% plants.forEach(plant => { %>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <img src="<%= plant.image_url %>" 
+                                     class="card-img-top" 
+                                     alt="<%= plant.name %>"
+                                     style="height: 200px; object-fit: cover;"
+                                     onerror="this.onerror=null; this.src='https://cdn.pixabay.com/photo/2016/12/30/13/15/plant-1940556_640.jpg';">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= plant.name %></h5>
+                                    <p class="card-text"><%= plant.description %></p>
+                                    <p class="text-success fw-bold">₹<%= plant.price.toLocaleString('en-IN') %></p>
+                                    <p class="text-muted">
+                                        <i class="fas fa-box me-1"></i>
+                                        <%= plant.stock_quantity %> in stock
+                                    </p>
+                                    
+                                    <!-- ADD QUANTITY SELECTOR -->
+                                    <div class="mb-3">
+                                        <label class="form-label">Quantity:</label>
+                                        <input type="number" 
+                                               id="quantity-<%= plant.id %>" 
+                                               class="form-control" 
+                                               value="1" 
+                                               min="1" 
+                                               max="<%= plant.stock_quantity %>"
+                                               style="width: 80px;">
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between">
+                                        <!-- FIXED: Added correct classes and data attributes -->
+                                        <button class="btn btn-outline-success btn-sm add-to-cart"
+                                                data-plant-id="<%= plant.id %>"
+                                                data-plant-name="<%= plant.name %>">
+                                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm wishlist-btn" 
+                                                data-plant-id="<%= plant.id %>">
+                                            <i class="fas fa-heart me-1"></i>Wishlist
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No plants available at the moment.
+                </div>
+            <% } %>
+        </div>
+    </div>
+</main>
+
+<script>
+// Add to wishlist functionality
+document.querySelectorAll('.wishlist-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const plantId = this.dataset.plantId;
+        fetch(`/customer/wishlist/add/${plantId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.success) {
+                this.classList.add('btn-danger');
+                this.classList.remove('btn-outline-danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error adding to wishlist');
+        });
+    });
+});
+
+// Add to cart functionality - THIS WILL WORK NOW!
+document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', function() {
+        const plantId = this.dataset.plantId;
+        const plantName = this.dataset.plantName;
+        const quantityInput = document.getElementById(`quantity-${plantId}`);
+        const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+        
+        // Show loading state
+        const originalText = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Adding...';
+        this.disabled = true;
+        
+        fetch(`/customer/cart/add/${plantId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ quantity: quantity })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`✅ Added ${quantity} ${plantName} to cart!`);
+                // Update cart counter if it exists
+                updateCartCounter();
+            } else {
+                alert('❌ ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Error adding to cart');
+        })
+        .finally(() => {
+            // Reset button state
+            this.innerHTML = originalText;
+            this.disabled = false;
+        });
+    });
+});
+
+// Function to update cart counter in navigation
+function updateCartCounter() {
+    const cartCounter = document.getElementById('cart-counter');
+    if (cartCounter) {
+        // Increment the counter by 1 (or by quantity if you want)
+        const currentCount = parseInt(cartCounter.textContent) || 0;
+        cartCounter.textContent = currentCount + 1;
+        
+        // Add animation
+        cartCounter.classList.add('bg-warning');
+        setTimeout(() => {
+            cartCounter.classList.remove('bg-warning');
+            cartCounter.classList.add('bg-danger');
+        }, 300);
+    }
+}
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,145 @@
+<%- include('../partials/header', { title: 'Manage Orders' }) %>
+<%- include('../partials/admin-sidebar') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Manage Orders</h1>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                        Filter: <%= statusFilter === 'all' ? 'All Orders' : statusFilter %>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item <%= statusFilter === 'all' ? 'active' : '' %>" href="/admin/orders?status=all">All Orders</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item <%= statusFilter === 'pending' ? 'active' : '' %>" href="/admin/orders?status=pending">Pending</a></li>
+                        <li><a class="dropdown-item <%= statusFilter === 'confirmed' ? 'active' : '' %>" href="/admin/orders?status=confirmed">Confirmed</a></li>
+                        <li><a class="dropdown-item <%= statusFilter === 'shipped' ? 'active' : '' %>" href="/admin/orders?status=shipped">Shipped</a></li>
+                        <li><a class="dropdown-item <%= statusFilter === 'delivered' ? 'active' : '' %>" href="/admin/orders?status=delivered">Delivered</a></li>
+                        <li><a class="dropdown-item <%= statusFilter === 'cancelled' ? 'active' : '' %>" href="/admin/orders?status=cancelled">Cancelled</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <% if (message) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    <%= message %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <% if (error) { %>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <!-- Order Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-2">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= orderStats.total %></h5>
+                            <p class="card-text">Total Orders</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= orderStats.pending %></h5>
+                            <p class="card-text">Pending</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= orderStats.confirmed %></h5>
+                            <p class="card-text">Confirmed</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= orderStats.shipped %></h5>
+                            <p class="card-text">Shipped</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= orderStats.delivered %></h5>
+                            <p class="card-text">Delivered</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-danger mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= orderStats.cancelled %></h5>
+                            <p class="card-text">Cancelled</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (orders && orders.length > 0) { %>
+                            <% orders.forEach(order => { %>
+                                <tr>
+                                    <td>#<%= order.id %></td>
+                                    <td>
+                                        <%= order.first_name %> <%= order.last_name %>
+                                        <br><small class="text-muted"><%= order.email %></small>
+                                    </td>
+                                    <td><%= new Date(order.order_date).toLocaleDateString() %></td>
+                                    <td><%= order.total_items || order.item_count %> items</td>
+                                    <td>₹<%= parseFloat(order.total_amount).toFixed(2) %></td>
+                                    <td>
+                                        <span class="badge 
+                                            <%= order.status === 'pending' ? 'bg-warning' : '' %>
+                                            <%= order.status === 'confirmed' ? 'bg-info' : '' %>
+                                            <%= order.status === 'shipped' ? 'bg-primary' : '' %>
+                                            <%= order.status === 'delivered' ? 'bg-success' : '' %>
+                                            <%= order.status === 'cancelled' ? 'bg-danger' : '' %>">
+                                            <%= order.status %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/orders/<%= order.id %>" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7" class="text-center">No orders found</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

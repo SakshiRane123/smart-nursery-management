@@ -1,0 +1,75 @@
+<%- include('../partials/header', { title: 'Manage Plants' }) %>
+<%- include('../partials/admin-sidebar') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Manage Plants</h1>
+                <a href="/admin/plants/new" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Add New Plant
+                </a>
+            </div>
+
+            <% if (typeof message !== 'undefined') { %>
+                <div class="alert alert-success">
+                    <%= message %>
+                </div>
+            <% } %>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (plants && plants.length > 0) { %>
+                            <% plants.forEach(plant => { %>
+                                <tr>
+                                    <td><%= plant.id %></td>
+                                    <td>
+                                        <img src="<%= plant.image_url || '/images/placeholder-plant.jpg' %>" 
+                                             alt="<%= plant.name %>" 
+                                             style="width: 50px; height: 50px; object-fit: cover;"
+                                             onerror="this.src='/images/placeholder-plant.jpg'">
+                                    </td>
+                                    <td><%= plant.name %></td>
+                                    <td>₹<%= parseFloat(plant.price).toFixed(2) %></td>
+                                    <td>
+                                        <span class="badge <%= plant.stock_quantity > 0 ? 'bg-success' : 'bg-danger' %>">
+                                            <%= plant.stock_quantity %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/plants/edit/<%= plant.id %>" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <form action="/admin/plants/delete/<%= plant.id %>" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-sm btn-danger" 
+                                                    onclick="return confirm('Are you sure you want to delete this plant?')">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center">No plants found</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

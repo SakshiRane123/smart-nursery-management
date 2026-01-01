@@ -1,0 +1,111 @@
+<%- include('../partials/header', { title: 'My Care Tasks' }) %>
+<%- include('../partials/navigation') %>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">🌿 My Care Tasks</h2>
+
+            <!-- Task Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= stats.total_tasks %></h5>
+                            <p class="card-text">Total Tasks</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= stats.pending_tasks %></h5>
+                            <p class="card-text">Pending</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= stats.in_progress_tasks %></h5>
+                            <p class="card-text">In Progress</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= stats.completed_tasks %></h5>
+                            <p class="card-text">Completed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks List -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>Assigned Tasks</h5>
+                </div>
+                <div class="card-body">
+                    <% if (tasks && tasks.length > 0) { %>
+                        <div class="row">
+                            <% tasks.forEach(task => { %>
+                                <div class="col-md-6 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h5 class="card-title"><%= task.plant_name %></h5>
+                                                <span class="badge 
+                                                    <%= task.status === 'pending' ? 'bg-warning' : '' %>
+                                                    <%= task.status === 'in_progress' ? 'bg-info' : '' %>
+                                                    <%= task.status === 'completed' ? 'bg-success' : '' %>">
+                                                    <%= task.status.replace('_', ' ') %>
+                                                </span>
+                                            </div>
+                                            <p class="card-text"><%= task.task_description %></p>
+                                            <p class="text-muted">
+                                                <i class="fas fa-calendar me-1"></i>
+                                                Scheduled: <%= new Date(task.scheduled_date).toLocaleDateString() %>
+                                            </p>
+                                            <% if (task.completed_date) { %>
+                                                <p class="text-success">
+                                                    <i class="fas fa-check-circle me-1"></i>
+                                                    Completed: <%= new Date(task.completed_date).toLocaleDateString() %>
+                                                </p>
+                                            <% } %>
+                                        </div>
+                                        <div class="card-footer">
+                                            <!-- Separate form for Start button -->
+                                            <% if (task.status !== 'completed') { %>
+                                                <form action="/tasks/<%= task.id %>/status" method="POST" class="d-inline me-2">
+                                                    <input type="hidden" name="status" value="in_progress">
+                                                    <button type="submit" class="btn btn-sm btn-info">
+                                                        <i class="fas fa-play"></i> Start
+                                                    </button>
+                                                </form>
+                                            <% } %>
+
+                                            <!-- Separate form for Complete button -->
+                                            <form action="/tasks/<%= task.id %>/status" method="POST" class="d-inline">
+                                                <input type="hidden" name="status" value="completed">
+                                                <button type="submit" class="btn btn-sm btn-success" 
+                                                        <%= task.status === 'completed' ? 'disabled' : '' %>>
+                                                    <i class="fas fa-check"></i> Complete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } else { %>
+                        <p class="text-muted text-center">No tasks assigned to you yet.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

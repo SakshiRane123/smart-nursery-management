@@ -1,0 +1,96 @@
+<%- include('../partials/header', { title: 'Create User' }) %>
+<%- include('../partials/navigation', { user: user }) %>
+
+<main class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Admin Menu</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="/admin/dashboard" class="list-group-item list-group-item-action">Dashboard</a>
+                    <a href="/admin/users" class="list-group-item list-group-item-action">Manage Users</a>
+                    <a href="/admin/create-user" class="list-group-item list-group-item-action active">Create User</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Create New User</h3>
+                </div>
+                <div class="card-body">
+                    <% if (message) { %>
+                        <div class="alert alert-<%= message.type %>">
+                            <%= message.text %>
+                        </div>
+                    <% } %>
+                    
+                    <form action="/admin/create-user" method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="firstName" class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="firstName" name="first_name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="lastName" class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" id="lastName" name="last_name" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username *</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password *</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                            <div class="form-text">Password must be at least 6 characters long</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role *</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="">Select a role</option>
+                                <option value="admin">Administrator</option>
+                                <option value="caretaker">Caretaker</option>
+                                <option value="customer">Customer</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Create User
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4">
+                        <a href="/admin/users" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Users List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

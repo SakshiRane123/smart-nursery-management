@@ -1,0 +1,60 @@
+<%- include('../partials/header', { title: 'Registration' }) %>
+<%- include('../partials/navigation', { user: null }) %>
+
+<main class="auth-container">
+    <div class="container">
+        <div class="auth-card card">
+            <div class="card-header">
+                <h3><i class="fas fa-user-plus"></i> Create Account</h3>
+            </div>
+            <div class="card-body">
+                <% if (typeof message !== 'undefined' && message) { %>
+                    <div class="alert alert-<%= message.type %>"><%= message.text %></div>
+                <% } %>
+                
+                <!-- Use regular form submission -->
+                <form action="/auth/register" method="POST">
+                    <input type="hidden" name="role" value="customer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="first_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" name="last_name" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number (Optional)</label>
+                        <input type="tel" class="form-control" id="phone" name="phone">
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Register as Customer</button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                <p class="text-center">Already have an account? <a href="/auth/login">Login here</a></p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

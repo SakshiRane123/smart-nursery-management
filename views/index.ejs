@@ -1,0 +1,96 @@
+<%- include('partials/header', { title: 'Home', script: null }) %>
+<%- include('partials/navigation', { user: null }) %>
+
+<main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="display-4 fw-bold mb-4">Welcome to GreenThumb Nursery</h1>
+                <p class="lead mb-4">Your one-stop solution for plant management and care</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="/auth/register" class="btn btn-success btn-lg px-4 py-2">
+                        <i class="fas fa-user-plus me-2"></i>Get Started
+                    </a>
+                    <a href="/auth/login" class="btn btn-outline-light btn-lg px-4 py-2">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Why Choose Our System?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <div class="feature-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h4>Plant Management</h4>
+                        <p>Easily manage your plant inventory, track growth, and monitor health status.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <div class="feature-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <h4>Care Scheduling</h4>
+                        <p>Schedule watering, fertilizing, and other care tasks for your plants.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <div class="feature-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h4>Online Store</h4>
+                        <p>Sell your plants online with our integrated e-commerce system.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Roles Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">Designed for Everyone</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-user fa-3x text-primary mb-3"></i>
+                            <h4>For Customers</h4>
+                            <p>Browse our plant collection, make purchases, and track your orders.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-seedling fa-3x text-success mb-3"></i>
+                            <h4>For Caretakers</h4>
+                            <p>Manage plant care tasks, track growth progress, and update plant status.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-cog fa-3x text-secondary mb-3"></i>
+                            <h4>For Administrators</h4>
+                            <p>Manage users, monitor system performance, and generate reports.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include('partials/footer') %>

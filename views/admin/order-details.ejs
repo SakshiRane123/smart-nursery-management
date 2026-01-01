@@ -1,0 +1,144 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/admin-sidebar') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><%= title %></h1>
+                <a href="/admin/orders" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Orders
+                </a>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Order Items</h5>
+                        </div>
+                        <div class="card-body">
+                            <% if (items && items.length > 0) { %>
+                                <% items.forEach(item => { %>
+                                    <div class="order-item mb-3 p-3 border rounded">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-2">
+                                                <img src="<%= item.image_url || '/images/placeholder-plant.jpg' %>" 
+                                                     alt="<%= item.name %>" 
+                                                     class="img-fluid rounded" 
+                                                     style="height: 60px; width: 60px; object-fit: cover;">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6 class="mb-1"><%= item.name %></h6>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <span>×<%= item.quantity %></span>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <span>₹<%= parseFloat(item.price).toFixed(2) %></span>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <strong>₹<%= (parseFloat(item.price) * parseInt(item.quantity)).toFixed(2) %></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } else { %>
+                                <p class="text-muted">No items found</p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong>Order Status:</strong>
+                                <span class="badge 
+                                    <%= order.status === 'pending' ? 'bg-warning' : '' %>
+                                    <%= order.status === 'confirmed' ? 'bg-info' : '' %>
+                                    <%= order.status === 'shipped' ? 'bg-primary' : '' %>
+                                    <%= order.status === 'delivered' ? 'bg-success' : '' %>
+                                    <%= order.status === 'cancelled' ? 'bg-danger' : '' %>">
+                                    <%= order.status %>
+                                </span>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Order Date:</strong><br>
+                                <%= new Date(order.order_date).toLocaleString() %>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Total Amount:</strong><br>
+                                ₹<%= parseFloat(order.total_amount).toFixed(2) %>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <strong>Shipping:</strong><br>
+                                ₹50.00
+                            </div>
+                            
+                            <hr>
+                            <div class="mb-3">
+                                <strong>Grand Total:</strong><br>
+                                ₹<%= (parseFloat(order.total_amount) + 50).toFixed(2) %>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Customer Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong><%= order.first_name %> <%= order.last_name %></strong><br>
+                                <%= order.email %><br>
+                                <%= order.phone || 'No phone provided' %>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Delivery Address</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0"><%= order.delivery_address %></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Update Form -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5>Update Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="/admin/orders/<%= order.id %>/status" method="POST">
+                                <div class="mb-3">
+                                    <select class="form-select" name="status" required>
+                                        <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="confirmed" <%= order.status === 'confirmed' ? 'selected' : '' %>>Confirmed</option>
+                                        <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                        <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                        <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    Update Status
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

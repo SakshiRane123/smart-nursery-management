@@ -1,0 +1,641 @@
+<%- include('../partials/header', { title: 'Plant Growth Tracker' }) %>
+<%- include('../partials/navigation', { user: user }) %>
+
+<main class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Plant Growth Tracker</h1>
+                <a href="/caretaker/growth-tracker/add" class="btn btn-success">
+                    <i class="fas fa-plus me-2"></i>Add Measurement
+                </a>
+            </div>
+            
+            <!-- Success Message -->
+            <% if (message) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle me-2"></i><%= message %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <!-- Error Message -->
+            <% if (error) { %>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-triangle me-2"></i><%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+            
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center stat-card">
+                        <div class="card-body">
+                            <i class="fas fa-ruler-combined fa-2x text-primary mb-2"></i>
+                            <h3><%= measurements.length %></h3>
+                            <p class="mb-0">Total Measurements</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center stat-card">
+                        <div class="card-body">
+                            <i class="fas fa-seedling fa-2x text-success mb-2"></i>
+                            <h3>
+                                <% 
+                                const uniquePlants = [...new Set(measurements.map(m => m.plant_name))];
+                                %>
+                                <%= uniquePlants.length %>
+                            </h3>
+                            <p class="mb-0">Plants Tracked</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-md-3">
+                    <div class="card text-center stat-card">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
+                            <h3>
+                                //<%
+                                // const heights = measurements.filter(m => m.height_cm).map(m => m.height_cm);
+                                //const avgHeight = heights.length > 0 ? 
+                                //    (heights.reduce((sum, h) => sum + h, 0) / heights.length).toFixed(1) : 0;
+                                %>
+                                <%= //avgHeight %> cm
+                            </h3>
+                            <p class="mb-0">Avg Height</p>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="col-md-3">
+                    <div class="card text-center stat-card">
+                        <div class="card-body">
+                            <i class="fas fa-leaf fa-2x text-info mb-2"></i>
+                            <h3>
+                                <%
+                                const leafCounts = measurements.filter(m => m.leaf_count).map(m => m.leaf_count);
+                                const totalLeaves = leafCounts.reduce((sum, count) => sum + count, 0);
+                                %>
+                                <%= totalLeaves %>
+                            </h3>
+                            <p class="mb-0">Total Leaves</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Growth Charts Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Growth Analytics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Height Growth Chart -->
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <h6 class="text-center">Height Growth Over Time</h6>
+                                <canvas id="heightChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Leaf Count Chart -->
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <h6 class="text-center">Leaf Count Over Time</h6>
+                                <canvas id="leafChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <!-- Plant Health Distribution -->
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <h6 class="text-center">Plant Condition Distribution</h6>
+                                <canvas id="healthChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Environmental Factors -->
+                        <!-- <div class="col-md-6">
+                            <div class="chart-container">
+                                <h6 class="text-center">Environmental Conditions</h6>
+                                <canvas id="environmentChart"></canvas>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Measurements Table -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-table me-2"></i>
+                        Recent Measurements
+                    </h5>
+                    <span class="badge bg-success"><%= measurements.length %> records</span>
+                </div>
+                <div class="card-body">
+                    <% if (measurements && measurements.length > 0) { %>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-success">
+                                    <tr>
+                                        <th>Plant Name</th>
+                                        <th>Height</th>
+                                        <th>Width</th>
+                                        <th>Leaves</th>
+                                        <th>Stem</th>
+                                        <th>Condition</th>
+                                        <th>Environment</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% measurements.forEach(measurement => { %>
+                                        <tr>
+                                            <td>
+                                                <strong class="text-success">
+                                                    <i class="fas fa-seedling me-1"></i>
+                                                    <%= measurement.plant_name %>
+                                                </strong>
+                                            </td>
+                                            <td>
+                                                <% if (measurement.height_cm) { %>
+                                                    <span class="badge bg-primary">
+                                                        <i class="fas fa-arrow-up me-1"></i>
+                                                        <%= measurement.height_cm %> cm
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="text-muted">-</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (measurement.width_cm) { %>
+                                                    <span class="badge bg-secondary">
+                                                        <%= measurement.width_cm %> cm
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="text-muted">-</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (measurement.leaf_count) { %>
+                                                    <span class="badge bg-warning text-dark">
+                                                        <i class="fas fa-leaf me-1"></i>
+                                                        <%= measurement.leaf_count %>
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="text-muted">-</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (measurement.stem_diameter_mm) { %>
+                                                    <span class="badge bg-info">
+                                                        <%= measurement.stem_diameter_mm %> mm
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="text-muted">-</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <% if (measurement.leaf_condition) { %>
+                                                    <% 
+                                                    const conditionClass = {
+                                                        'excellent': 'bg-success',
+                                                        'good': 'bg-primary', 
+                                                        'wilting': 'bg-warning',
+                                                        'curling': 'bg-danger',
+                                                        'dropping': 'bg-danger'
+                                                    }[measurement.leaf_condition] || 'bg-secondary';
+                                                    
+                                                    const conditionIcons = {
+                                                        'excellent': 'fa-smile',
+                                                        'good': 'fa-meh',
+                                                        'wilting': 'fa-frown',
+                                                        'curling': 'fa-exclamation-triangle',
+                                                        'dropping': 'fa-skull'
+                                                    }[measurement.leaf_condition] || 'fa-question';
+                                                    %>
+                                                    <span class="badge <%= conditionClass %>">
+                                                        <i class="fas <%= conditionIcons %> me-1"></i>
+                                                        <%= measurement.leaf_condition %>
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="text-muted">-</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <small>
+                                                    <% if (measurement.sunlight_hours) { %>
+                                                        <div>☀️ <%= measurement.sunlight_hours %>h</div>
+                                                    <% } %>
+                                                    <% if (measurement.temperature_celsius) { %>
+                                                        <div>🌡️ <%= measurement.temperature_celsius %>°C</div>
+                                                    <% } %>
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">
+                                                    <% if (measurement.measured_at) { %>
+                                                        <%= new Date(measurement.measured_at).toLocaleDateString() %>
+                                                        <br>
+                                                        <span class="text-muted">
+                                                            <%= new Date(measurement.measured_at).toLocaleTimeString() %>
+                                                        </span>
+                                                    <% } else { %>
+                                                        -
+                                                    <% } %>
+                                                </small>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary" 
+                                                            onclick="viewMeasurement('<%= measurement.id %>', '<%= measurement.plant_name %>')"
+                                                            title="View Details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center py-5">
+                            <i class="fas fa-ruler-combined fa-4x text-muted mb-3"></i>
+                            <h3>No Measurements Yet</h3>
+                            <p class="text-muted mb-4">Start tracking your plant growth by adding the first measurement!</p>
+                            <a href="/caretaker/growth-tracker/add" class="btn btn-success btn-lg">
+                                <i class="fas fa-plus me-2"></i>Add First Measurement
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Chart Creation Functions -->
+<script>
+// Chart colors
+const chartColors = [
+    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+    '#858796', '#5a5c69', '#00a7dc', '#f8f9fc', '#2e59d9'
+];
+
+// 1. Height Growth Chart
+function createHeightChart(heightData) {
+    const ctx = document.getElementById('heightChart').getContext('2d');
+    
+    const datasets = Object.keys(heightData).map((plantName, index) => {
+        const plantData = heightData[plantName];
+        return {
+            label: plantName,
+            data: plantData.heights,
+            borderColor: chartColors[index % chartColors.length],
+            backgroundColor: chartColors[index % chartColors.length] + '20',
+            tension: 0.4,
+            fill: false
+        };
+    });
+
+    // Get all unique dates for labels
+    const allDates = [...new Set(Object.values(heightData).flatMap(data => data.dates))].sort();
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: allDates,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y} cm`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Height (cm)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 2. Leaf Count Chart
+function createLeafChart(leafData) {
+    const ctx = document.getElementById('leafChart').getContext('2d');
+    
+    const datasets = Object.keys(leafData).map((plantName, index) => {
+        const plantData = leafData[plantName];
+        return {
+            label: plantName,
+            data: plantData.leaves,
+            borderColor: chartColors[(index + 2) % chartColors.length],
+            backgroundColor: chartColors[(index + 2) % chartColors.length] + '20',
+            tension: 0.4,
+            fill: false
+        };
+    });
+
+    // Get all unique dates for labels
+    const allDates = [...new Set(Object.values(leafData).flatMap(data => data.dates))].sort();
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: allDates,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Leaf Count'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 3. Health Condition Chart
+function createHealthChart(healthData) {
+    const ctx = document.getElementById('healthChart').getContext('2d');
+    
+    const conditionColors = {
+        'excellent': '#1cc88a',
+        'good': '#36b9cc', 
+        'wilting': '#f6c23e',
+        'curling': '#e74a3b',
+        'dropping': '#858796'
+    };
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(healthData),
+            datasets: [{
+                data: Object.values(healthData),
+                backgroundColor: Object.keys(healthData).map(condition => 
+                    conditionColors[condition] || '#858796'
+                ),
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 4. Environmental Conditions Chart
+function createEnvironmentChart(environmentData) {
+    const ctx = document.getElementById('environmentChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Sunlight', 'Temperature', 'Humidity'],
+            datasets: [{
+                label: 'Average Values',
+                data: [
+                    environmentData.sunlight || 0,
+                    environmentData.temperature || 0, 
+                    environmentData.humidity || 0
+                ],
+                backgroundColor: [
+                    '#f6c23e',
+                    '#e74a3b',
+                    '#36b9cc'
+                ],
+                borderColor: [
+                    '#f6c23e',
+                    '#e74a3b', 
+                    '#36b9cc'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label.toLowerCase();
+                            const value = context.parsed.y;
+                            let unit = '';
+                            
+                            if (label === 'sunlight') unit = ' hours/day';
+                            else if (label === 'temperature') unit = '°C';
+                            else if (label === 'humidity') unit = '%';
+                            
+                            return `Average: ${value}${unit}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+</script>
+
+<!-- Chart Data Preparation and Initialization -->
+<script>
+// Prepare chart data from measurements
+// Safe data preparation for charts
+const measurements = JSON.parse(`<%- JSON.stringify(measurements).replace(/'/g, "\\'") %>`);
+
+// Group measurements by plant
+const plantsData = {};
+measurements.forEach(measurement => {
+    if (!plantsData[measurement.plant_name]) {
+        plantsData[measurement.plant_name] = [];
+    }
+    plantsData[measurement.plant_name].push(measurement);
+});
+
+// Prepare data for charts
+function prepareChartData() {
+    const chartData = {
+        heightData: {},
+        leafData: {},
+        healthData: {},
+        environmentData: {}
+    };
+
+    // Process each plant's data
+    Object.keys(plantsData).forEach(plantName => {
+        const plantMeasurements = plantsData[plantName]
+            .filter(m => m.measured_at)
+            .sort((a, b) => new Date(a.measured_at) - new Date(b.measured_at));
+
+        // Height data
+        chartData.heightData[plantName] = {
+            dates: plantMeasurements.map(m => 
+                new Date(m.measured_at).toLocaleDateString()
+            ),
+            heights: plantMeasurements.map(m => m.height_cm).filter(h => h != null)
+        };
+
+        // Leaf data
+        chartData.leafData[plantName] = {
+            dates: plantMeasurements.map(m => 
+                new Date(m.measured_at).toLocaleDateString()
+            ),
+            leaves: plantMeasurements.map(m => m.leaf_count).filter(l => l != null)
+        };
+    });
+
+    // Health condition data
+    const conditions = {};
+    measurements.forEach(m => {
+        if (m.leaf_condition) {
+            conditions[m.leaf_condition] = (conditions[m.leaf_condition] || 0) + 1;
+        }
+    });
+    chartData.healthData = conditions;
+
+    // Environmental data (averages)
+    const sunlightMeasurements = measurements.filter(m => m.sunlight_hours);
+    const temperatureMeasurements = measurements.filter(m => m.temperature_celsius);
+    const humidityMeasurements = measurements.filter(m => m.humidity_percent);
+
+    const avgSunlight = sunlightMeasurements.length > 0 ? 
+        sunlightMeasurements.reduce((sum, m) => sum + m.sunlight_hours, 0) / sunlightMeasurements.length : 0;
+
+    const avgTemperature = temperatureMeasurements.length > 0 ? 
+        temperatureMeasurements.reduce((sum, m) => sum + m.temperature_celsius, 0) / temperatureMeasurements.length : 0;
+
+    const avgHumidity = humidityMeasurements.length > 0 ? 
+        humidityMeasurements.reduce((sum, m) => sum + m.humidity_percent, 0) / humidityMeasurements.length : 0;
+
+    chartData.environmentData = {
+        sunlight: avgSunlight,
+        temperature: avgTemperature,
+        humidity: avgHumidity
+    };
+
+    return chartData;
+}
+
+// Initialize charts when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const chartData = prepareChartData();
+    
+    // Only create charts if we have data
+    if (measurements.length > 0) {
+        createHeightChart(chartData.heightData);
+        createLeafChart(chartData.leafData);
+        createHealthChart(chartData.healthData);
+        createEnvironmentChart(chartData.environmentData);
+    }
+});
+
+// Simple JavaScript for actions
+function viewMeasurement(measurementId, plantName) {
+    alert('Viewing measurement for: ' + plantName + '\nMeasurement ID: ' + measurementId + '\n\nWe will add detailed view in the next step!');
+}
+</script>
+
+<style>
+.chart-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+}
+
+/* Make sure charts are responsive */
+canvas {
+    max-width: 100%;
+}
+
+.stat-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+.stat-card .card-body {
+    padding: 1.5rem 1rem;
+}
+.stat-card h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+</style>
+
+<%- include('../partials/footer') %>

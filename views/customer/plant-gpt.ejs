@@ -1,0 +1,176 @@
+<%- include('../partials/header', { title: 'Plant GPT - AI Care Assistant' }) %>
+<%- include('../partials/navigation', { user: user }) %>
+
+<main class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-robot text-info me-2"></i>Plant GPT</h1>
+                <span class="badge bg-info fs-6">AI Care Assistant</span>
+            </div>
+
+            <div class="alert alert-info">
+                <h4><i class="fas fa-info-circle me-2"></i>Hello Plant Parent!</h4>
+                <p class="mb-0">Ask me anything about plant care, troubleshooting, or gardening tips. I'm here to help your plants thrive! 🌱</p>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Plant Care Chat</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chat-container border rounded p-3 mb-3 bg-light" 
+                         style="height: 400px; overflow-y: auto;" id="chatBox">
+                        <div class="bot-message alert alert-success">
+                            <strong>🌱 PlantGPT:</strong> Hello <strong><%= user.first_name %></strong>! I'm your AI plant care assistant. How can I help with your plants today? You can ask me about watering, sunlight, diseases, or any plant care questions!
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Buttons -->
+                    <div class="row mb-3">
+                        <div class="col-md-3 col-6 mb-2">
+                            <button class="btn btn-outline-success w-100 btn-sm" 
+                                    onclick="quickQuestion('How often should I water my plants?')">
+                                💧 Watering Help
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2">
+                            <button class="btn btn-outline-warning w-100 btn-sm" 
+                                    onclick="quickQuestion('Why are my plant leaves turning yellow?')">
+                                🍂 Yellow Leaves
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2">
+                            <button class="btn btn-outline-danger w-100 btn-sm" 
+                                    onclick="quickQuestion('What causes brown spots on leaves?')">
+                                🔴 Brown Spots
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2">
+                            <button class="btn btn-outline-info w-100 btn-sm" 
+                                    onclick="quickQuestion('Best plants for low light conditions?')">
+                                💡 Low Light Plants
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="userInput" 
+                               placeholder="Ask about plant care, diseases, watering schedules...">
+                        <button class="btn btn-success" onclick="sendMessage()" id="sendBtn">
+                            <i class="fas fa-paper-plane me-1"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to Dashboard -->
+            <div class="mt-3">
+                <a href="/dashboard" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .user-message {
+        background: #007bff;
+        color: white;
+        border-radius: 15px;
+        padding: 12px 15px;
+        margin: 10px 0;
+        max-width: 80%;
+        float: right;
+        clear: both;
+    }
+    .bot-message {
+        background: #28a745;
+        color: white;
+        border-radius: 15px;
+        padding: 12px 15px;
+        margin: 10px 0;
+        max-width: 80%;
+        float: left;
+        clear: both;
+    }
+    .typing-indicator {
+        background: #6c757d;
+        color: white;
+        border-radius: 15px;
+        padding: 10px 15px;
+        margin: 10px 0;
+        max-width: 50%;
+        float: left;
+        font-style: italic;
+    }
+</style>
+
+<script>
+    async function sendMessage() {
+        const userInput = document.getElementById('userInput');
+        const message = userInput.value.trim();
+        const sendBtn = document.getElementById('sendBtn');
+        
+        if (!message) return;
+
+        // Disable button and show loading
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Sending...';
+
+        // Add user message to chat
+        const chatBox = document.getElementById('chatBox');
+        chatBox.innerHTML += `<div class="user-message"><strong>You:</strong> ${message}</div>`;
+        
+        // Clear input
+        userInput.value = '';
+        
+        // Show typing indicator
+        chatBox.innerHTML += `<div class="typing-indicator" id="typing">PlantGPT is typing...</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            const response = await fetch('/plant-gpt/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+            
+            // Remove typing indicator
+            document.getElementById('typing').remove();
+            
+            // Add AI response
+            chatBox.innerHTML += `<div class="bot-message"><strong>🌱 PlantGPT:</strong> ${data.response.replace(/\n/g, '<br>')}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+        } catch (error) {
+            document.getElementById('typing').remove();
+            chatBox.innerHTML += `<div class="bot-message alert alert-danger"><strong>❌ Error:</strong> Sorry, I'm having trouble responding. Please check your connection and try again.</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        } finally {
+            // Re-enable button
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Send';
+        }
+    }
+
+    function quickQuestion(question) {
+        document.getElementById('userInput').value = question;
+        sendMessage();
+    }
+
+    // Send message on Enter key
+    document.getElementById('userInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    // Auto-focus on input
+    document.getElementById('userInput').focus();
+</script>
+
+<%- include('../partials/footer') %>

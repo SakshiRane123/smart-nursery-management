@@ -1,0 +1,99 @@
+<%- include('../partials/header', { title: 'My Wishlist' }) %>
+<%- include('../partials/navigation', { user: user }) %>
+
+<main class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-heart me-2"></i>My Wishlist</h2>
+                <a href="/customer/plants" class="btn btn-outline-success">
+                    <i class="fas fa-leaf me-2"></i>Browse More Plants
+                </a>
+            </div>
+
+            <% if (wishlist && wishlist.length > 0) { %>
+                <div class="row">
+                    <% wishlist.forEach(plant => { %>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <img src="<%= plant.image_url || '/images/placeholder-plant.jpg' %>" 
+                                     class="card-img-top" 
+                                     alt="<%= plant.name %>"
+                                     style="height: 200px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title"><%= plant.name %></h5>
+                                    <p class="card-text"><%= plant.description %></p>
+                                    <p class="text-success fw-bold">$<%= plant.price %></p>
+                                    <p class="text-muted">
+                                        <i class="fas fa-box me-1"></i>
+                                        <%= plant.stock_quantity %> in stock
+                                    </p>
+                                    <p class="text-muted small">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Added on <%= new Date(plant.added_date).toLocaleDateString() %>
+                                    </p>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between">
+                                        <button class="btn btn-success btn-sm">
+                                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                                        </button>
+                                        <button class="btn btn-danger btn-sm remove-wishlist" 
+                                                data-plant-id="<%= plant.id %>">
+                                            <i class="fas fa-trash me-1"></i>Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-heart fa-3x mb-3 text-muted"></i>
+                    <h4>Your wishlist is empty</h4>
+                    <p>Start adding plants you love to your wishlist!</p>
+                    <a href="/customer/plants" class="btn btn-success">
+                        <i class="fas fa-leaf me-2"></i>Browse Plants
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</main>
+
+<script>
+// Remove from wishlist functionality
+document.querySelectorAll('.remove-wishlist').forEach(button => {
+    button.addEventListener('click', function() {
+        const plantId = this.dataset.plantId;
+        if (confirm('Remove this plant from your wishlist?')) {
+            fetch(`/customer/wishlist/remove/${plantId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    // Remove the card from view
+                    this.closest('.col-md-4').remove();
+                    
+                    // Check if wishlist is now empty
+                    if (document.querySelectorAll('.col-md-4').length === 0) {
+                        location.reload(); // Reload to show empty state
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error removing from wishlist');
+            });
+        }
+    });
+});
+</script>
+
+<%- include('../partials/footer') %>

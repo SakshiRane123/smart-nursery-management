@@ -1,0 +1,71 @@
+<%- include('../partials/header', { title: 'Caretaker Dashboard' }) %>
+<%- include('../partials/navigation', { user: user }) %>
+
+<main class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-warning">
+                <h2><i class="fas fa-seedling me-2"></i>Welcome, <%= user.first_name %>!</h2>
+                <p>You are logged in as a <strong>caretaker</strong>.</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-tasks fa-3x text-primary mb-3"></i>
+                            <h5>Care Tasks</h5>
+                            <p>Manage plant care tasks</p>
+                            <a href="/caretaker/tasks" class="btn btn-outline-primary">View Tasks</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- NEW: Plant Growth Tracker Card -->
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                            <h5>Growth Tracker</h5>
+                            <p>Track plant measurements</p>
+                            <a href="/caretaker/growth-tracker" class="btn btn-outline-success">View Tracker</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add this card to your dashboard -->
+                <!-- <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-robot fa-3x text-info mb-3"></i>
+                            <h5>Plant GPT</h5>
+                            <p>AI plant care assistant</p>
+                            <a href="/plant-gpt" class="btn btn-outline-info">Chat Now</a>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- END NEW CARD -->
+                <!-- <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-clipboard-list fa-3x text-success mb-3"></i>
+                            <h5>Plant Health</h5>
+                            <p>Monitor plant health</p>
+                            <a href="/caretaker/health" class="btn btn-outline-success">Check Health</a>
+                        </div>
+                    </div>
+                </div> -->
+                <!-- <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-calendar-alt fa-3x text-info mb-3"></i>
+                            <h5>Schedule</h5>
+                            <p>View care schedule</p>
+                            <a href="/caretaker/schedule" class="btn btn-outline-info">View Schedule</a>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

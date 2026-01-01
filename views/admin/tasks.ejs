@@ -1,0 +1,186 @@
+<%- include('../partials/header', { title: 'Manage Care Tasks' }) %>
+<%- include('../partials/admin-sidebar') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Manage Care Tasks</h1>
+            </div>
+
+            <% if (message) { %>
+                <div class="alert alert-success alert-dismissible fade show">
+                    <%= message %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <% if (error) { %>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <%= error %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <!-- Task Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= stats.total_tasks %></h5>
+                            <p class="card-text">Total Tasks</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= stats.pending_tasks %></h5>
+                            <p class="card-text">Pending</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= stats.in_progress_tasks %></h5>
+                            <p class="card-text">In Progress</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= stats.completed_tasks %></h5>
+                            <p class="card-text">Completed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Task Form -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Assign New Task</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/tasks" method="POST">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Plant *</label>
+                                    <select class="form-select" name="plant_id" required>
+                                        <option value="">Select Plant</option>
+                                        <% plants.forEach(plant => { %>
+                                            <option value="<%= plant.id %>"><%= plant.name %></option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Caretaker *</label>
+                                    <select class="form-select" name="caretaker_id" required>
+                                        <option value="">Select Caretaker</option>
+                                        <% caretakers.forEach(caretaker => { %>
+                                            <option value="<%= caretaker.id %>">
+                                                <%= caretaker.first_name %> <%= caretaker.last_name %> (<%= caretaker.username %>)
+                                            </option>
+                                        <% }); %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Scheduled Date *</label>
+                                    <input type="date" class="form-control" name="scheduled_date" required 
+                                           min="<%= new Date().toISOString().split('T')[0] %>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Task Description *</label>
+                            <textarea class="form-control" name="task_description" rows="3" 
+                                      placeholder="E.g., Water the plant, Check for pests, Fertilize, etc." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-plus"></i> Assign Task
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tasks List -->
+            <div class="card">
+                <div class="card-header">
+                    <h5>All Tasks</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Task ID</th>
+                                    <th>Plant</th>
+                                    <th>Caretaker</th>
+                                    <th>Description</th>
+                                    <th>Scheduled</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (tasks && tasks.length > 0) { %>
+                                    <% tasks.forEach(task => { %>
+                                        <tr>
+                                            <td>#<%= task.id %></td>
+                                            <td>
+                                                <img src="<%= task.plant_image || '/images/placeholder-plant.jpg' %>" 
+                                                     alt="<%= task.plant_name %>" 
+                                                     style="width: 40px; height: 40px; object-fit: cover;"
+                                                     class="rounded me-2">
+                                                <%= task.plant_name %>
+                                            </td>
+                                            <td><%= task.caretaker_first_name %> <%= task.caretaker_last_name %></td>
+                                            <td><%= task.task_description %></td>
+                                            <td><%= new Date(task.scheduled_date).toLocaleDateString() %></td>
+                                            <td>
+                                                <span class="badge 
+                                                    <%= task.status === 'pending' ? 'bg-warning' : '' %>
+                                                    <%= task.status === 'in_progress' ? 'bg-info' : '' %>
+                                                    <%= task.status === 'completed' ? 'bg-success' : '' %>">
+                                                    <%= task.status.replace('_', ' ') %>
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <form action="/tasks/<%= task.id %>/status" method="POST" class="d-inline">
+                                                    <input type="hidden" name="status" value="completed">
+                                                    <button type="submit" class="btn btn-sm btn-success" 
+                                                            <%= task.status === 'completed' ? 'disabled' : '' %>>
+                                                        <i class="fas fa-check"></i> Complete
+                                                    </button>
+                                                </form>
+                                                <form action="/admin/tasks/<%= task.id %>/delete" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-danger" 
+                                                            onclick="return confirm('Are you sure you want to delete this task?')">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7" class="text-center">No tasks found</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

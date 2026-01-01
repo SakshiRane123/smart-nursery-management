@@ -1,0 +1,59 @@
+<%- include('../partials/header', { title: 'Customer Dashboard' }) %>
+<%- include('../partials/navigation', { user: user }) %>
+
+<main class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-success">
+                <h2><i class="fas fa-user me-2"></i>Welcome, <%= user.first_name %>!</h2>
+                <p>You are logged in as a <strong>customer</strong>.</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-leaf fa-3x text-success mb-3"></i>
+                            <h5>Browse Plants</h5>
+                            <p>Explore our plant collection</p>
+                            <a href="/customer/plants" class="btn btn-outline-success">View Plants</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                            <h5>My Wishlist</h5>
+                            <p>Your favorite plants</p>
+                            <a href="/customer/wishlist" class="btn btn-outline-danger">View Wishlist</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-shopping-cart fa-3x text-primary mb-3"></i>
+                            <h5>My Orders</h5>
+                            <p>View your plant orders</p>
+                            <a href="/customer/orders" class="btn btn-outline-primary">View Orders</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- ADD AI CHATBOT CARD HERE -->
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-robot fa-3x text-info mb-3"></i>
+                            <h5>Plant Care Assistant</h5>
+                            <p>Get AI advice for your plants</p>
+                            <a href="/plant-gpt" class="btn btn-outline-info">Chat with AI</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,74 @@
+<%- include('../partials/header', { title: title }) %>
+<%- include('../partials/admin-sidebar') %>
+
+<div class="container-fluid">
+    <div class="row">
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><%= title %></h1>
+                <a href="/admin/plants" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Plants
+                </a>
+            </div>
+
+            <% if (message) { %>
+                <div class="alert alert-<%= message.type %>">
+                    <%= message.text %>
+                </div>
+            <% } %>
+
+            <div class="card">
+                <div class="card-body">
+                    <form action="<%= plant ? '/admin/plants/update/' + plant.id : '/admin/plants' %>" method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Plant Name *</label>
+                                    <input type="text" class="form-control" name="name" 
+                                           value="<%= plant ? plant.name : '' %>" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Price (₹) *</label>
+                                    <input type="number" step="0.01" class="form-control" name="price" 
+                                           value="<%= plant ? plant.price : '' %>" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Stock Quantity *</label>
+                                    <input type="number" class="form-control" name="stock_quantity" 
+                                           value="<%= plant ? plant.stock_quantity : '' %>" required>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Image URL</label>
+                                    <input type="url" class="form-control" name="image_url" 
+                                           value="<%= plant ? plant.image_url : '' %>"
+                                           placeholder="https://example.com/plant.jpg">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Care Instructions</label>
+                                    <textarea class="form-control" name="care_instructions" rows="3"><%= plant ? plant.care_instructions : '' %></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="4"><%= plant ? plant.description : '' %></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> <%= plant ? 'Update Plant' : 'Add Plant' %>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

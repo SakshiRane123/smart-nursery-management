@@ -1,0 +1,25 @@
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Admin Menu</h5>
+    </div>
+    <div class="list-group list-group-flush">
+        <a href="/admin/dashboard" class="list-group-item list-group-item-action <%= title === 'Admin Dashboard' ? 'active' : '' %>">
+            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+        </a>
+        <a href="/admin/users" class="list-group-item list-group-item-action <%= title === 'Manage Users' ? 'active' : '' %>">
+            <i class="fas fa-users me-2"></i>Manage Users
+        </a>
+        <a href="/admin/create-user" class="list-group-item list-group-item-action <%= title === 'Create User' ? 'active' : '' %>">
+            <i class="fas fa-user-plus me-2"></i>Create User
+        </a>
+        <a href="/admin/plants" class="list-group-item list-group-item-action <%= title === 'Manage Plants' ? 'active' : '' %>">
+            <i class="fas fa-leaf me-2"></i>Manage Plants
+        </a>
+        <a href="/admin/orders" class="list-group-item list-group-item-action <%= title === 'View Orders' ? 'active' : '' %>">
+            <i class="fas fa-shopping-cart me-2"></i>View Orders
+        </a>
+        <a href="/admin/reports" class="list-group-item list-group-item-action <%= title === 'Reports' ? 'active' : '' %>">
+            <i class="fas fa-chart-bar me-2"></i>Reports
+        </a>
+    </div>
+</div>

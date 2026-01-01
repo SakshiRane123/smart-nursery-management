@@ -1,0 +1,102 @@
+<%- include('../partials/header', { title: 'Admin Dashboard' }) %>
+<%- include('../partials/navigation', { user: user }) %>
+
+<main class="container my-5">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Admin Menu</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="/admin/dashboard" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                    <a href="/admin/users" class="list-group-item list-group-item-action">
+                        <i class="fas fa-users me-2"></i>Manage Users
+                    </a>
+                    <a href="/admin/plants" class="list-group-item list-group-item-action">
+                        <i class="fas fa-leaf me-2"></i>Manage Plants
+                    </a>
+                    <a href="/admin/orders" class="list-group-item list-group-item-action">
+                        <i class="fas fa-shopping-cart me-2"></i>View Orders
+                    </a>
+                    <!-- ADD TASKS LINK TO SIDEBAR -->
+                    <a href="/admin/tasks" class="list-group-item list-group-item-action">
+                        <i class="fas fa-tasks me-2"></i>Assign Tasks
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+                <!-- ADD QUICK ACTION BUTTON -->
+                <a href="/admin/tasks" class="btn btn-success">
+                    <i class="fas fa-tasks me-1"></i> Assign Tasks
+                </a>
+            </div>
+
+            <div class="alert alert-info">
+                <h4><i class="fas fa-shield-alt me-2"></i>Welcome, <%= user.first_name %>!</h4>
+                <p>You have administrator privileges with full system access.</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center text-white bg-primary">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-2x mb-2"></i>
+                            <h4>Users</h4>
+                            <p>Manage system users</p>
+                            <a href="/admin/users" class="btn btn-light">Manage</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center text-white bg-success">
+                        <div class="card-body">
+                            <i class="fas fa-leaf fa-2x mb-2"></i>
+                            <h4>Plants</h4>
+                            <p>Manage plant inventory</p>
+                            <a href="/admin/plants" class="btn btn-light">Manage</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center text-white bg-info">
+                        <div class="card-body">
+                            <i class="fas fa-tasks fa-2x mb-2"></i>
+                            <h4>Tasks</h4>
+                            <p>Assign care tasks</p>
+                            <a href="/admin/tasks" class="btn btn-light">Assign</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center text-white bg-warning">
+                        <div class="card-body">
+                            <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                            <h4>Orders</h4>
+                            <p>View customer orders</p>
+                            <a href="/admin/orders" class="btn btn-light">View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center text-white bg-secondary">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-2x mb-2"></i>
+                            <h4>Reports</h4>
+                            <p>View system reports</p>
+                            <a href="/admin/reports" class="btn btn-light">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

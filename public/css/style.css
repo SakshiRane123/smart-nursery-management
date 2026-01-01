@@ -1,0 +1,152 @@
+:root {
+    --primary: #2e7d32;
+    --primary-light: #4caf50;
+    --secondary: #ff8f00;
+    --light: #f8f9fa;
+    --dark: #343a40;
+}
+
+body {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.navbar-brand {
+    font-weight: 700;
+}
+
+.card {
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: none;
+    overflow: hidden;
+}
+
+.card-header {
+    background: var(--primary);
+    color: white;
+    text-align: center;
+    padding: 20px;
+    border-bottom: 0;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background: var(--primary);
+    border: none;
+    padding: 12px 20px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.hero-section {
+    background: url('/images/hero-bg.jpg') no-repeat center center;
+    background-size: cover;
+    padding: 100px 0;
+    color: white;
+    text-align: center;
+    position: relative;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.feature-box {
+    text-align: center;
+    padding: 30px;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+    height: 100%;
+}
+
+.feature-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.admin-only {
+    background: #f8d7da;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #dc3545;
+}
+
+.role-badge {
+    background: var(--secondary);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80') no-repeat center center;
+    background-size: cover;
+    padding: 100px 0;
+    color: white;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    background-color: #f8f9fa;
+}
+
+/* Loading placeholder */
+.card-img-top:before {
+    content: "🌿";
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background-color: #e9ecef;
+}
+
+
+
+
